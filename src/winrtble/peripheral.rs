@@ -443,7 +443,7 @@ impl ApiPeripheral for Peripheral {
             .characteristics
             .get(&characteristic.uuid)
             .ok_or_else(|| Error::NotSupported("Characteristic not found for write".into()))?;
-        ble_characteristic.write_value(data, write_type).await
+        ble_characteristic.acquire_write_value(data, write_type).await
     }
 
     /// Enables either notify or indicate (depending on support) for the specified characteristic.

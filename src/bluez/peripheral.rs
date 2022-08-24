@@ -157,16 +157,12 @@ impl api::Peripheral for Peripheral {
         &self,
         characteristic: &Characteristic,
         data: &[u8],
-        write_type: WriteType,
+        _write_type: WriteType,
     ) -> Result<()> {
         let characteristic_info = self.characteristic_info(characteristic)?;
-        let options = WriteOptions {
-            write_type: Some(write_type.into()),
-            ..Default::default()
-        };
         Ok(self
             .session
-            .write_characteristic_value_with_options(&characteristic_info.id, data, options)
+            .acquire_write_characteristic(&characteristic_info.id, data)
             .await?)
     }
 
