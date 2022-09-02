@@ -157,8 +157,24 @@ impl api::Peripheral for Peripheral {
         &self,
         characteristic: &Characteristic,
         data: &[u8],
-        _write_type: WriteType,
+        write_type: WriteType,
     ) -> Result<()> {
+        let characteristic_info = self.characteristic_info(characteristic)?;
+        let options = WriteOptions {
+            write_type: Some(write_type.into()),
+            ..Default::default()
+        };
+        Ok(self
+            .session
+            .write_characteristic_value_with_options(&characteristic_info.id, data, options)
+            .await?)
+    }
+
+    async fn mtu_write(
+        &self,
+        characteristic: &Characteristic,
+        data: &[u8],
+    ) -> Result<u16> {
         let characteristic_info = self.characteristic_info(characteristic)?;
         Ok(self
             .session

@@ -443,7 +443,24 @@ impl ApiPeripheral for Peripheral {
             .characteristics
             .get(&characteristic.uuid)
             .ok_or_else(|| Error::NotSupported("Characteristic not found for write".into()))?;
-        ble_characteristic.acquire_write_value(data, write_type).await
+        ble_characteristic.write_value(data, write_type).await
+    }
+
+    async fn mtu_write(
+        &self,
+        characteristic: &Characteristic,
+        data: &[u8],
+    ) -> Result<u16> {
+        let ble_service = &*self
+            .shared
+            .ble_services
+            .get(&characteristic.service_uuid)
+            .ok_or_else(|| Error::NotSupported("Service not found for write".into()))?;
+        let ble_characteristic = ble_service
+            .characteristics
+            .get(&characteristic.uuid)
+            .ok_or_else(|| Error::NotSupported("Characteristic not found for write".into()))?;
+        ble_characteristic.acquire_write_value(data).await
     }
 
     /// Enables either notify or indicate (depending on support) for the specified characteristic.

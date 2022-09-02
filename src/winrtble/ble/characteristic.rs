@@ -57,23 +57,26 @@ impl BLECharacteristic {
         }
     }
 
-    pub async fn acquire_write_value(&self,data: &[u8], write_type: WriteType,) -> Result<()>{
+    pub async fn acquire_write_value(&self, data: &[u8]) -> Result<u16>{
+        let write_type = WriteType::WithoutResponse;
         if let Ok(mtu) = self.characteristic.Service().and_then(|service|service.Session()).and_then(|session|session.MaxPduSize()){
             debug!("device mtu {:?}", mtu);
             let mut data  = data;
-            let mtu = mtu as usize - 3;
-            while data.len() > mtu {
-                let (left, right) = data.split_at(mtu);
+            let len = mtu as usize - 3;
+            while data.len() > len {
+                let (left, right) = data.split_at(len);
                 data = right;
                 self.write_value(left, write_type).await?;
             }
             if !data.is_empty(){
                 self.write_value(data, write_type).await?;
             }
+            Ok(mtu)
         } else {
             self.write_value(data, write_type).await?;
+            Ok(23)
         }
-        Ok(())
+        
     }
 
     pub async fn write_value(&self, data: &[u8], write_type: WriteType) -> Result<()> {
