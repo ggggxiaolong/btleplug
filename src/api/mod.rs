@@ -249,6 +249,14 @@ pub trait Peripheral: Send + Sync + Clone + Debug {
         write_type: WriteType,
     ) -> Result<()>;
 
+    /// Write some data to the characteristic with MTU size. Only works with characteristic that has
+    /// WriteAcquired property which relies on write-without-response Flag.
+    async fn mtu_write(
+        &self,
+        characteristic: &Characteristic,
+        data: &[u8],
+    ) -> Result<u16>;
+
     /// Sends a read request to the device. Returns either an error if the request was not accepted
     /// or the response from the device.
     async fn read(&self, characteristic: &Characteristic) -> Result<Vec<u8>>;

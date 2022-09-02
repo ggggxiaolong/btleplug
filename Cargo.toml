@@ -31,7 +31,7 @@ uuid = "1.1.2"
 serde_cr = { package = "serde", version = "1.0.140", features = ["derive"], default-features = false, optional = true }
 serde_bytes = { version = "0.11.6", optional = true }
 dashmap = "5.3.4"
-futures = "0.3.21"
+futures = "0.3.24"
 static_assertions = "1.1.0"
 tokio = { version = "1.20.1", features = ["rt", "sync"] }
 tokio-stream = { version = "0.1.9", features = ["sync"] }
